@@ -1,0 +1,70 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <imports>
+        <import resource="services/subscriber.xml"/>
+    </imports>
+
+    <services>
+
+        <defaults public="true" autowire="true">
+            <bind key="$logger" type="service" id="mond1_s_w_r5.logger" />
+            <bind key="$configReader" type="service" id="shopware.plugin.cached_config_reader" />
+        </defaults>
+        <service id="Mond1SWR5\Bootstrap\TranslationTransformer" public="true"/>
+
+        <service id="Mond1SWR5\Services\SessionService" public="true">
+            <argument id="session" type="service" key="$session"/>
+        </service>
+        <service id="Mond1SWR5\Helpers\DocumentHelper">
+            <argument key="$router" id="router" type="service"/>
+            <argument key="$modelManager" id="models" type="service"/>
+        </service>
+        <service id="Mond1SWR5\Components\PluginConfig\Service\ConfigService" public="true">
+            <argument key="$router" id="router" type="service"/>
+        </service>
+        <service id="Mond1SWR5\Services\PaymentService" public="true"/>
+        <service id="Mond1SWR5\Services\Webhook\WebhookService" public="true"/>
+        <service id="Mond1SWR5\Services\PaymentStatusService" public="true"/>
+        <service id="Mond1SWR5\Services\ShopwarePaymentService" public="true">
+            <argument type="service" id="translation"/>
+        </service>
+        <service id="Mond1SWR5\Services\ShopwareShipmentService" public="true">
+            <argument type="service" id="translation"/>
+        </service>
+        <service id="Mond1SWR5\Components\MonduApi\Service\MonduClient" public="true">
+            <argument key="$logger" id="pluginlogger" />
+        </service>
+        <service id="Mond1SWR5\Helpers\OrderHelper" public="true"/>
+        <service id="Mond1SWR5\Helpers\CartHelper" public="true"/>
+        <service id="Mond1SWR5\Helpers\CustomerHelper" public="true"/>
+        <service id="Mond1SWR5\Helpers\PaymentHelper" public="true"/>
+        <service id="Mond1SWR5\Helpers\ModuleHelper" public="true"/>
+        <service id="Mond1SWR5\Helpers\WebhookHelper" public="true">
+            <argument type="service" id="Mond1SWR5\Components\MonduApi\Service\MonduClient" />
+			<argument type="service" id="Mond1SWR5\Components\PluginConfig\Service\ConfigService" />
+        </service>
+
+        <service id="Mond1SWR5\Subscriber\Cron\OrderStatusCron">
+            <argument key="$modelManager" id="models" type="service"/>
+            <argument key="$db" id="db" type="service"/>
+            <tag name="shopware.event_subscriber"/>
+        </service>
+
+        <service id="Mond1SWR5\Commands\ValidateCommand">
+			<argument type="service" id="Mond1SWR5\Helpers\WebhookHelper"/>
+            <tag name="console.command" command="sw:Mond1SWR5:validate"/>
+        </service>
+        <service id="Mond1SWR5\Commands\ActivatePaymentCommand">
+			<argument type="service" id="Mond1SWR5\Services\ShopwarePaymentService"/>
+            <tag name="console.command" command="sw:Mond1SWR5:activate:payment"/>
+        </service>
+        <service id="Mond1SWR5\Commands\ActivateShipmentCostCommand">
+			<argument type="service" id="Mond1SWR5\Services\ShopwareShipmentService"/>
+            <tag name="console.command" command="sw:Mond1SWR5:activate:shipment:cost"/>
+        </service>
+    </services>
+</container>

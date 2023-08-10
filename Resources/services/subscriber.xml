@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+
+        <defaults public="true" autowire="true">
+            <tag name="shopware.event_subscriber" />
+        </defaults>
+
+        <service id="Mond1SWR5\Subscriber\TemplateRegistration">
+            <argument key="$pluginDirectory">%mond1_s_w_r5.plugin_dir%</argument>
+        </service>
+        <service id="Mond1SWR5\Subscriber\Frontend\PaymentFilterSubscriber" >
+            <argument key="$session" id="session" type="service"/>
+        </service>
+        <service id="Mond1SWR5\Subscriber\OrderSubscriber">
+            <argument key="$pluginDirectory">%mond1_s_w_r5.plugin_dir%</argument>
+        </service>
+    </services>
+</container>

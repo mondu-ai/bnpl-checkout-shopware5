@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/shopware/5.5/engine/Shopware/Components/Plugin/schema/config.xsd">
+    <elements>
+        <element type="boolean" scope="locale" required="true">
+            <name>mondu/mode/sandbox</name>
+            <label lang="de">API sandbox</label>
+            <label lang="en">API sandbox</label>
+            <value>true</value>
+            <description lang="de">Use sandbox environment</description>
+            <description lang="en">Use sandbox environment</description>
+        </element>
+
+        <element type="text" scope="locale" required="true">
+            <name>mondu/credentials/api_token</name>
+            <label lang="de">API token</label>
+            <label lang="en">API token</label>
+            <description lang="de">API token provided by Mondu</description>
+            <description lang="en">API token provided by Mondu</description>
+        </element>
+
+        <element type="text" scope="locale">
+            <name>mondu/credentials/webhook_secret</name>
+            <label lang="de">Webhook secret</label>
+            <label lang="en">Webhook secret</label>
+            <description lang="de">Webhook secret provided by Mondu</description>
+            <description lang="en">Webhook secret provided by Mondu</description>
+        </element>
+
+        <element type="boolean" required="true" scope="locale">
+            <name>mondu/mode/b2b</name>
+            <label lang="de">Enable B2B filtering</label>
+            <label lang="en">Enable B2B filtering</label>
+            <value>1</value>
+            <description lang="de">
+                If set to "Yes", Mondu payment will only be visible to b2b customers
+            </description>
+            <description lang="en">
+                If set to "Yes", Mondu payment will only be visible to b2b customers
+            </description>
+        </element>
+
+        <element type="boolean" required="true" scope="locale">
+            <name>mondu/mode/cron</name>
+            <label lang="de">Enable automatic order processing</label>
+            <label lang="en">Enable automatic order processing</label>
+            <value>0</value>
+            <description lang="de">
+                If set to "Yes", Mondu cron job will be activated and it will ship or cancel orders depending on the current order state.
+            </description>
+            <description lang="en">
+                If set to "Yes", Mondu cron job will be activated and it will ship or cancel orders depending on the current order state.
+            </description>
+        </element>
+        <element type="boolean" required="true" scope="locale">
+            <name>mondu/mode/extend_invoice_template</name>
+            <label lang="de">Extend order invoice template</label>
+            <label lang="en">Extend order invoice template</label>
+            <value>0</value>
+        </element>
+
+        <element type="select" required="true" scope="locale">
+            <name>mondu/mode/invoice_create_state</name>
+            <label lang="de">Create invoice on Order State</label>
+            <label lang="en">Create invoice on Order State</label>
+            <value>completely_delivered</value>
+            <store>
+                <option>
+                    <value>completed</value>
+                    <label lang="de">Completed</label>
+                    <label lang="en">Completed</label>
+                </option>
+                <option>
+                    <value>completely_delivered</value>
+                    <label lang="de">Completely Delivered</label>
+                    <label lang="en">Completely Delivered</label>
+                </option>
+            </store>
+        </element>
+
+
+        <element type="boolean" required="true" scope="locale">
+            <name>mondu/mode/validate_invoice</name>
+            <label lang="de">Require document to create an invoice</label>
+            <label lang="en">Require document to create an invoice</label>
+            <value>1</value>
+            <description lang="de">
+                If set to "Yes", Mondu will validate the existence of invoice before you can change order to final state
+            </description>
+            <description lang="en">
+                If set to "Yes", Mondu will validate the existence of invoice before you can change order to final state
+            </description>
+        </element>
+
+        <element type="button">
+            <name>mondu/credentials/test</name>
+            <label lang="de">Validate API Token and Register webhooks</label>
+            <label lang="en">Validate API Token and Register webhooks</label>
+            <options>
+                <handler>
+                    <![CDATA[
+                    function() {
+                      Ext.Ajax.request({
+                        url: 'MonduConfig/test',
+                        success: function (response) {
+                            response = Ext.JSON.decode(response.responseText);
+                            Shopware.Msg.createGrowlMessage(response.statusText, response.message)
+                        },
+                        failure: function (response) {
+                            if (response.status === 404) {
+                                Shopware.Msg.createGrowlMessage('Plugin Manager', 'Please activate plugin before testing api.');
+                            } else {
+                                Shopware.Msg.createGrowlMessage(response.statusText, response.responseText)
+                            }
+                        }
+                      });
+                    }
+                    ]]>
+                </handler>
+            </options>
+        </element>
+    </elements>
+</config>
