@@ -7,7 +7,7 @@ use Shopware\Components\HttpClient\GuzzleFactory;
 use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\HttpClient\GuzzleHttpClient;
 use Shopware\Components\HttpClient\HttpClientInterface;
-use Shopware\Components\Logger;
+use Monolog\Logger;
 
 class MonduClient {
     private $config;
@@ -54,7 +54,7 @@ class MonduClient {
      * @return array|null
      * @throws RequestException
      */
-    public function confirmMonduOrder($orderUid): ?array {
+    public function confirmMonduOrder($orderUid) {
         $response = $this->sendRequest('post', 'orders/'. $orderUid . '/confirm', null, 'CONFIRM_ORDER');
         return $response['order'] ?? null;
     }
@@ -62,7 +62,7 @@ class MonduClient {
     /**
      * @throws RequestException
      */
-    public function getMonduOrder($orderUid): ?array {
+    public function getMonduOrder($orderUid) {
         $response = $this->sendRequest('get', 'orders/' . $orderUid, null, 'GET_ORDER');
         return $response['order'] ?? null;
     }
@@ -77,7 +77,7 @@ class MonduClient {
     /**
      * @throws RequestException
      */
-    public function cancelOrder($orderUid): ?string {
+    public function cancelOrder($orderUid) {
         $response = $this->sendRequest('post', 'orders/' . $orderUid .'/cancel', null, 'CANCEL_ORDER');
 
         return $response['order']['state'] ?? null;

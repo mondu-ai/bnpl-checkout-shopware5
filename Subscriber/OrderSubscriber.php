@@ -60,12 +60,12 @@ class OrderSubscriber implements SubscriberInterface
     private $snippetManager;
 
     public function __construct(
+        $pluginDirectory,
         ModelManager $modelManager,
         OrderHelper $orderHelper,
         DocumentHelper $documentHelper,
         PaymentStatusService $paymentStatusService,
-        SnippetManager $snippetManager,
-        $pluginDirectory
+        SnippetManager $snippetManager
     ) {
         $this->modelManager = $modelManager;
         $this->snippetManager = $snippetManager;

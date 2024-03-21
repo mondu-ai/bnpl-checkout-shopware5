@@ -181,7 +181,7 @@ class ShopwareShipmentService
             Shopware()->Container()->get(ModelManager::class)->flush();
             $shippingCost['id'] = $dispatchModel->getId();
         } catch (Exception $e) {
-            $message = "Failed to update {$shippingCost["name"]}, error message:" + $e->getMessage();
+            $message = "Failed to update {$shippingCost["name"]}, error message:" . $e->getMessage();
         }
         return $message;
     }

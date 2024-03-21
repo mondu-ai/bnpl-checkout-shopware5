@@ -3,19 +3,16 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
-
-        <defaults public="true" autowire="true">
+        <service autowire="true" id="Mond1SWR5\Subscriber\TemplateRegistration" class="Mond1SWR5\Subscriber\TemplateRegistration">
+            <argument>%mond1_s_w_r5.plugin_dir%</argument>
             <tag name="shopware.event_subscriber" />
-        </defaults>
-
-        <service id="Mond1SWR5\Subscriber\TemplateRegistration">
-            <argument key="$pluginDirectory">%mond1_s_w_r5.plugin_dir%</argument>
         </service>
-        <service id="Mond1SWR5\Subscriber\Frontend\PaymentFilterSubscriber" >
-            <argument key="$session" id="session" type="service"/>
+        <service autowire="true" id="Mond1SWR5\Subscriber\Frontend\PaymentFilterSubscriber" class="Mond1SWR5\Subscriber\Frontend\PaymentFilterSubscriber" >
+            <tag name="shopware.event_subscriber" />
         </service>
-        <service id="Mond1SWR5\Subscriber\OrderSubscriber">
-            <argument key="$pluginDirectory">%mond1_s_w_r5.plugin_dir%</argument>
+        <service autowire="true" id="Mond1SWR5\Subscriber\OrderSubscriber" class="Mond1SWR5\Subscriber\OrderSubscriber">
+            <argument>%mond1_s_w_r5.plugin_dir%</argument>
+            <tag name="shopware.event_subscriber" />
         </service>
     </services>
 </container>

@@ -10,7 +10,7 @@
     <author>Mondu GmbH</author>
     <link>https://mondu.ai</link>
     <license>proprietary</license>
-    <compatibility minVersion="5.6.4"/>
+    <compatibility minVersion="5.3.7"/>
 
     <description lang="en">This module offers you Mondu as a checkout option</description>
     <description lang="de">This module offers you Mondu as a checkout option</description>

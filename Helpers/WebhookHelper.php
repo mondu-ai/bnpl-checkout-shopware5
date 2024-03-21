@@ -40,19 +40,6 @@ class WebhookHelper
     {
         $webhooks = $this->monduClient->getWebhooks();
 
-        //fix for incorrect webhook url for versions < 1.0.11
-        foreach ($webhooks as $webhook) {
-            if (str_contains($webhook['address'], 'backend')) {
-                $this->monduClient->deleteWebhook($webhook['uuid']);
-            }
-        }
-
-        $webhooks = array_filter($webhooks, function ($webhook) {
-            if (str_contains($webhook['address'], 'backend'))
-                return false;
-            return true;
-        });
-
         $registeredTopics = array_map(function ($webhook) {
             return $webhook['topic'];
         }, $webhooks);

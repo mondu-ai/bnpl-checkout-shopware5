@@ -46,14 +46,14 @@ class OrderHelper
     public function __construct(
         ModelManager $modelManager,
         DocumentHelper $documentHelper,
-        Logger $logger,
         ConfigService $configService,
         CartHelper $cartHelper,
         CustomerHelper $customerHelper
     ) {
         $this->modelManager = $modelManager;
         $this->documentHelper = $documentHelper;
-        $this->logger = $logger;
+
+        $this->logger = Shopware()->Container()->get('mond1_s_w_r5.logger');
         $this->configService = $configService;
         $this->cartHelper = $cartHelper;
         $this->customerHelper = $customerHelper;
@@ -163,13 +163,13 @@ class OrderHelper
         return $newOrder;
     }
 
-    public function updateExternalInfoOrder($order) {
+    public function updateExternalInfoOrder($order, $orderNumber = '') {
         /**
          * @var MonduClient
          */
         $client = Shopware()->Container()->get(MonduClient::class);
         $updateOrderData = [
-            'external_reference_id' => $order->getNumber()
+            'external_reference_id' => $orderNumber ?: $order->getNumber()
         ];
 
         return $client->updateExternalInfoOrder($order->getTransactionId(), $updateOrderData);
@@ -179,7 +179,6 @@ class OrderHelper
         $userData = $orderVariables['sUserData'];
         $basket = $orderVariables['sBasket'];
         $content = $basket['content'];
-
         $totalAmount = $this->cartHelper->getTotalAmount($orderVariables['sBasket'], $orderVariables['sUserData']);
         $shippingAmount = $this->cartHelper->getShippingAmount($orderVariables['sBasket'], $orderVariables['sUserData']);
         $chargeVat = $this->customerHelper->chargeVat($orderVariables['sUserData']);
@@ -211,7 +210,9 @@ class OrderHelper
             if($detail->getPrice() > 0) {
                 $lineitems = $this->getLineItemsFromDetail($detail, $order, $lineitems);
             } else {
-                [$total, $net] = $this->getAmountsFromDetail($detail, $detail->getQuantity(), $order->getNet());
+                $amounts = $this->getAmountsFromDetail($detail, $detail->getQuantity(), $order->getNet());
+                $total = $amounts[0];
+                $net = $amounts[1];
                 $totalDiscount += round(abs($net) * 100);
                 $totalDiscountGross += round(abs($total) * 100);
             }
@@ -249,7 +250,8 @@ class OrderHelper
     {
         $lineItems = [];
         foreach ($content as $item) {
-            if($item['amountNumeric'] <= 0) {
+            $amountNumeric = (float) $item['price'];
+            if($amountNumeric <= 0) {
                 continue;
             }
 
@@ -261,13 +263,15 @@ class OrderHelper
     public function getTotalDiscount($content, $chargeVat) {
         $discount = 0;
         foreach ($content as $item) {
-            if ($item['amountNumeric'] > 0) {
+            $amountNumeric = (float) $item['priceNumeric'];
+            if ($amountNumeric > 0) {
                 continue;
             }
+
             if ($chargeVat) {
-                $amountNumeric = abs($item['amountWithTax'] ?? $item['amountNumeric']);
+                $amountNumeric = abs($amountNumeric);
             } else {
-                $amountNumeric = abs($item['amountnetNumeric']);
+                $amountNumeric = abs((float) $item['netprice']);
             }
             $discount += round($amountNumeric * 100);
         }
@@ -275,9 +279,9 @@ class OrderHelper
     }
 
     public function getLineItem($item, $chargeVat) {
-        $itemAmountNet = $item['netprice'];
-        $totalAmountNet = $item['amountnetNumeric'];
-        $taxAmount = str_replace(',', '.', $item['tax']);
+        $itemAmountNet = (float) $item['netprice'];
+        $totalAmountNet = (float) str_replace(',', '.', $item['amountnet']);
+        $taxAmount = (float) str_replace(',', '.', $item['tax']);
 
         return [
             'external_reference_id' => $item['ordernumber'],
@@ -407,7 +411,7 @@ class OrderHelper
         }
 
         if ($net) {
-            $amountGross = Shopware()->Container()->get('shopware.cart.net_rounding')->round($price, $taxValue, $quantity);
+            $amountGross = $this->round($price, $taxValue, $quantity);
             return [$amountGross, $amount];
         } else {
             $amountNet = round(($price * $quantity) / (100 + $taxValue) * 100, 2);
@@ -423,8 +427,13 @@ class OrderHelper
      */
     private function getLineItemsFromDetail($detail, $order, array $lineItems): array
     {
-        [$totalAmount, $totalAmountNet] = $this->getAmountsFromDetail($detail, $detail->getQuantity(), $order->getNet());
-        [$itemAmount, $itemAmountNet] = $this->getAmountsFromDetail($detail, 1, $order->getNet());
+        $totalAmounts = $this->getAmountsFromDetail($detail, $detail->getQuantity(), $order->getNet());
+        $totalAmount = $totalAmounts[0];
+        $totalAmountNet = $totalAmounts[1];
+
+        $itemAmounts = $this->getAmountsFromDetail($detail, 1, $order->getNet());
+        $itemAmount = $itemAmounts[0];
+        $itemAmountNet = $itemAmounts[1];
         $chargeVat = !$order->getTaxFree();
         $lineItems[] = [
             'external_reference_id' => $detail->getArticleNumber(),
@@ -469,5 +478,17 @@ class OrderHelper
             $newLineItems[] = $lineItem;
         }
         return $newLineItems;
+    }
+
+    private function round(float $netPrice, float $tax, int $quantity = null): float
+    {
+        if ($quantity === 0) {
+            return 0.0;
+        }
+
+        $netPrice = round(round($netPrice, 2) / 100 * (100 + $tax), 2);
+        $netPrice = (\is_int($quantity) && $quantity !== 1) ? round($netPrice * $quantity, 2) : $netPrice;
+
+        return $netPrice;
     }
 }

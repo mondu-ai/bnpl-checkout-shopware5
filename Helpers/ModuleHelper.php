@@ -22,7 +22,6 @@ class ModuleHelper
     }
 
     public function getShopVersion() {
-        $shopwareRelease = Shopware()->Container()->getParameter('shopware.release.version');
-        return $shopwareRelease;
+        return \Shopware::VERSION;
     }
 }

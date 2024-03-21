@@ -86,7 +86,10 @@ class Shopware_Controllers_Frontend_MonduWebhook extends Enlight_Controller_Acti
         try {
             $this->webhookService->getWebhookHandler($topic)->invoke($webhookData);
             $this->response->setBody(\json_encode(['error' => 0, 'message' => 'ok']));
-        } catch (OrderNotFoundException| RuntimeException $e) {
+        } catch (OrderNotFoundException $e) {
+            $this->responseWithError(404, 'Order not found');
+            return;
+        } catch (RuntimeException $e) {
             $this->responseWithError(404, 'Order not found');
             return;
         }
@@ -108,7 +111,7 @@ class Shopware_Controllers_Frontend_MonduWebhook extends Enlight_Controller_Acti
      * @return void
      */
     private function responseWithError($code = 400, $message = 'Bad Request') {
-        $this->response->setStatusCode($code);
+        $this->response->setHttpResponseCode($code);
         $this->response->setBody(json_encode(
             [
                 'error' => 1,

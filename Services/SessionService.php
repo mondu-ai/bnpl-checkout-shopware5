@@ -54,6 +54,7 @@ class SessionService {
 
     public function getOrder() {
         $orderVariables = Shopware()->Session()->get('sOrderVariables');
+
         return $this->orderHelper->getOrderFromOrderVariables($orderVariables);
     }
 

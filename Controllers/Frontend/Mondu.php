@@ -67,12 +67,14 @@ class Shopware_Controllers_Frontend_Mondu extends Shopware_Controllers_Frontend_
         $mapping = array_flip(PaymentMethods::MAPPING);
         $paymentMethod = $mapping[$this->getPaymentShortName()];
 
-        [ $checkoutUrl ] = $this->sessionService->createCheckoutSession(
+        $data = $this->sessionService->createCheckoutSession(
             $this->getReturnUrl($this->persistBasket()),
             $this->getCancelUrl(),
             $this->getDeclineUrl(),
             $paymentMethod
         );
+
+        $checkoutUrl = $data[0];
 
         if(!$checkoutUrl) {
             $this->handleError('Mondu: Error during checkout, please try again');
@@ -134,10 +136,9 @@ class Shopware_Controllers_Frontend_Mondu extends Shopware_Controllers_Frontend_
                 );
         }
 
-
         $repo = $this->getModelManager()->getRepository(Order::class);
         $order = $repo->findOneBy(['number' => $orderNumber]);
-        $monduOrder = $this->orderHelper->updateExternalInfoOrder($order);
+        $monduOrder = $this->orderHelper->updateExternalInfoOrder($order, (string) $orderNumber);
 
         $this->updateShopwareOrder($order,
             [
