@@ -179,6 +179,15 @@ class ConfigService {
         return $config['mondu/mode/cron'] ?? false;
     }
 
+    public function getAdditionalInvoiceDocuments(): array
+    {
+        $config = $this->getPluginConfiguration();
+
+        $additionalInvoiceDocuments = $config['mondu/mode/additional_documents'];
+
+        return $additionalInvoiceDocuments ? array_map('trim', explode(',', $additionalInvoiceDocuments)) : [];
+    }
+
     public function setWebhookSecret($secret) {
         try {
             $pluginRepository = $this->modelManager->getRepository(Plugin::class);

@@ -154,15 +154,13 @@ class WebhookStruct
     {
         $result = new self();
         $result->setEventType($data['event_type']);
-
         $result->setTopic($data['topic']);
         $result->setExternalReferenceId($data['external_reference_id']);
         $result->setOrderUid($data['order_uuid']);
         $result->setOrderState($data['order_state']);
-
         $result->setCreationTime($data['create_time']);
         $result->setId($data['id']);
-        $result->setViban($data['viban']);
+        $result->setViban($data['bank_account']['iban'] ?? null);
         $result->setResourceType($data['resource_type']);
         $result->setSummary($data['summary']);
         $result->setResource($data['resource']);

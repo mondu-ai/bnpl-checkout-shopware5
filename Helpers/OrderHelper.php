@@ -196,7 +196,7 @@ class OrderHelper
                 [
                     'discount_cents' => $this->getTotalDiscount($content, $chargeVat),
                     'shipping_price_cents' => round($shippingAmount * 100),
-                    'line_items' => $this->getLineItems($content, $chargeVat)
+                    'line_items' => $this->removeDuplicateSwReferenceIds($this->getLineItems($content, $chargeVat))
                 ]
             ]
         ];
@@ -239,7 +239,7 @@ class OrderHelper
                 [
                     'discount_cents' => $totalDiscountGross,
                     'shipping_price_cents' => round($order->getInvoiceShipping() * 100),
-                    'line_items' => $lineitems
+                    'line_items' => $this->removeDuplicateSwReferenceIds($lineitems)
                 ]
             ]
         ];
@@ -387,7 +387,7 @@ class OrderHelper
             'external_reference_id' => $invoiceNumber,
             'invoice_url' => $invoiceUrl,
             'gross_amount_cents' => round($order->getInvoiceAmount() * 100),
-            'line_items' => $this->getOrderLineItems($order)
+            'line_items' => $this->removeDuplicateSwReferenceIds($this->getOrderLineItems($order))
         ];
     }
 
@@ -436,5 +436,38 @@ class OrderHelper
             'product_id' => (string)$detail->getArticleId()
         ];
         return $lineItems;
+    }
+
+    /**
+     * 
+     * This is a hotfix for an issue with duplicate line_item external reference id - sw-payment
+     * 
+     * @param array $lineItems
+     * @return array
+     */
+    private function removeDuplicateSwReferenceIds(array $lineItems): array
+    {
+        $referenceIds = ['sw-payment', 'sw-payment-absolute', 'sw-discount', 'sw-discount-absolute'];
+
+        $lineItemReferenceIds = [];
+        foreach ($lineItems as $lineItem) {
+            if (in_array($lineItem['external_reference_id'], $referenceIds)) {
+                $lineItemReferenceIds[] = $lineItem['external_reference_id'];
+            }
+        }
+
+        if (count($lineItemReferenceIds) === count(array_unique($lineItemReferenceIds))) {
+            return $lineItems;
+        }
+
+        $newLineItems = [];
+        foreach ($lineItems as $key => $lineItem) {
+            if (in_array($lineItem['external_reference_id'], $referenceIds)) {
+                $lineItem['external_reference_id'] .= '-' . $key;
+            }
+
+            $newLineItems[] = $lineItem;
+        }
+        return $newLineItems;
     }
 }
