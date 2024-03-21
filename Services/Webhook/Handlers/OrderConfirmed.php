@@ -30,9 +30,9 @@ class OrderConfirmed implements WebhookHandler
     public function invoke(Webhook $webhook)
     {
         $this->paymentStatusService->updatePaymentStatus(
-            $webhook->getOrderUid(),
+            $webhook->getExternalReferenceId(),
             Status::PAYMENT_STATE_COMPLETELY_PAID,
-            STATUS::GROUP_PAYMENT,
+            Status::GROUP_PAYMENT,
             $webhook->getOrderState()
         );
         $this->orderHelper->setOrderViban($webhook->getExternalReferenceId(), $webhook->getOrderUid(), $webhook->getViban());

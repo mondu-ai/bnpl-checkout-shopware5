@@ -92,6 +92,14 @@
             </description>
         </element>
 
+        <element type="text" scope="locale" required="true">
+            <name>mondu/mode/additional_documents</name>
+            <label lang="de">Additional invoice documents</label>
+            <label lang="en">Additional invoice documents</label>
+            <description lang="de">List of additional invoice document keys (e.g. mondu-invoice,mondu-sepa-invoice)</description>
+            <description lang="en">List of additional invoice document keys (e.g. mondu-invoice,mondu-sepa-invoice)</description>
+        </element>
+
         <element type="button">
             <name>mondu/credentials/test</name>
             <label lang="de">Validate API Token and Register webhooks</label>

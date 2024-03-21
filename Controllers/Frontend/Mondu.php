@@ -7,6 +7,7 @@ use Mond1SWR5\Helpers\OrderHelper;
 use Mond1SWR5\Services\SessionService;
 use Shopware\Components\DependencyInjection\Container;
 use Shopware\Models\Order\Order;
+use Shopware\Models\Order\Status;
 
 class Shopware_Controllers_Frontend_Mondu extends Shopware_Controllers_Frontend_Payment
 {
@@ -30,6 +31,10 @@ class Shopware_Controllers_Frontend_Mondu extends Shopware_Controllers_Frontend_
      * @var OrderHelper
      */
     private $orderHelper;
+
+    /**
+     * @var ConfigService
+     */
     private $configService;
 
     public function setContainer(Container $loader = null)
@@ -92,6 +97,8 @@ class Shopware_Controllers_Frontend_Mondu extends Shopware_Controllers_Frontend_
     /**
      * @return void
      * @throws \Shopware\Components\HttpClient\RequestException
+     *
+     * @throws Exception
      */
     public function returnAction()
     {
@@ -106,16 +113,27 @@ class Shopware_Controllers_Frontend_Mondu extends Shopware_Controllers_Frontend_
         $orderUid = $this->request->get('order_uuid');
         $monduOrder = $this->monduClient->confirmMonduOrder($orderUid);
 
-        if (!$monduOrder || $monduOrder['state'] !== 'confirmed') {
+        if (!$monduOrder || !$this->isMonduOrderSuccessful($monduOrder['state'])) {
             $this->handleError('Mondu: Unable to confirm the Order');
             return;
         }
 
-        $orderNumber = $this->saveOrder(
-            $orderUid,
-            $orderUid,
-            self::PAYMENTSTATUSPAID
-        );
+        switch ($monduOrder['state']) {
+            case PaymentMethods::MONDU_STATE_CONFIRMED:
+                $orderNumber = $this->saveOrder(
+                    $orderUid,
+                    $orderUid,
+                    self::PAYMENTSTATUSPAID
+                );
+                break;
+            default:
+                $orderNumber = $this->saveOrder(
+                    $orderUid,
+                    $orderUid,
+                    Status::PAYMENT_STATE_REVIEW_NECESSARY
+                );
+        }
+
 
         $repo = $this->getModelManager()->getRepository(Order::class);
         $order = $repo->findOneBy(['number' => $orderNumber]);
@@ -124,7 +142,7 @@ class Shopware_Controllers_Frontend_Mondu extends Shopware_Controllers_Frontend_
         $this->updateShopwareOrder($order,
             [
                 'uuid' => $orderUid,
-                'state' => 'confirmed',
+                'state' => $monduOrder['state'],
                 'payment_method' => $monduOrder['payment_method'],
                 'iban' => $monduOrder['bank_account']['iban'],
                 'company_name' => $monduOrder['merchant']['company_name'],
@@ -189,5 +207,14 @@ class Shopware_Controllers_Frontend_Mondu extends Shopware_Controllers_Frontend_
         $orderAttribute->setMonduMerchantCompanyName($monduOrder['company_name']);
         $orderAttribute->setMonduAuthorizedNetTerm($monduOrder['authorized_net_term']);
         $this->getModelManager()->flush($orderAttribute);
+    }
+
+    /**
+     * @param string $state
+     * @return bool
+     */
+    private function isMonduOrderSuccessful(string $state): bool
+    {
+        return in_array($state, [PaymentMethods::MONDU_STATE_PENDING, PaymentMethods::MONDU_STATE_CONFIRMED]);
     }
 }

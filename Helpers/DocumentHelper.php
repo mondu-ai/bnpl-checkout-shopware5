@@ -2,6 +2,7 @@
 
 namespace Mond1SWR5\Helpers;
 
+use Mond1SWR5\Components\PluginConfig\Service\ConfigService;
 use Shopware\Components\Model\ModelManager;
 use Shopware\Components\Routing\Context;
 use Shopware\Components\Routing\Router;
@@ -26,18 +27,28 @@ class DocumentHelper
      */
     private $config;
 
-    public function __construct(ModelManager $modelManager, Router $router, \Shopware_Components_Config $config)
-    {
+    /**
+     * @var ConfigService
+     */
+    private $configService;
+
+    public function __construct(
+        ModelManager $modelManager,
+        Router $router,
+        \Shopware_Components_Config $config,
+        ConfigService $configService
+    ) {
         $this->modelManager = $modelManager;
         $this->router = $router;
         $this->config = $config;
+        $this->configService = $configService;
     }
 
     public function getInvoiceUrlForOrder(Order $order)
     {
         /** @var Document $document */
         foreach ($order->getDocuments() as $document) {
-            if ($document->getType()->getKey() === 'invoice') {
+            if ($this->isInvoiceDocument($document)) {
                 return $this->getInvoiceUrl($document);
             }
         }
@@ -49,7 +60,7 @@ class DocumentHelper
     {
         /** @var Document $document */
         foreach ($order->getDocuments() as $document) {
-            if ($document->getType()->getKey() === 'invoice') {
+            if ($this->isInvoiceDocument($document)) {
                 return $document->getDocumentId();
             }
         }
@@ -82,5 +93,12 @@ class DocumentHelper
         $this->router->setContext($oldContext);
 
         return $url;
+    }
+
+    private function isInvoiceDocument(Document $document)
+    {
+        $additionalDocuments = $this->configService->getAdditionalInvoiceDocuments();
+        return $document->getType()->getKey() === 'invoice' ||
+            in_array($document->getType()->getKey(), $additionalDocuments);
     }
 }

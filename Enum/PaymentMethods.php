@@ -25,6 +25,9 @@ final class PaymentMethods extends Enum
         self::MONDU_INSTALLMENT => self::PAYMENT_MONDU_3
     ];
 
+    const MONDU_STATE_CONFIRMED = 'confirmed';
+    const MONDU_STATE_PENDING = 'pending';
+
     const PAYMENTS = [
         self::PAYMENT_MONDU_1 => [
             'name' => self::PAYMENT_MONDU_1,

@@ -5,7 +5,7 @@
     <label lang="en">Mondu Payment</label>
     <label lang="de">Mondu Payment</label>
 
-    <version>2.0.1</version>
+    <version>2.1.0</version>
     <copyright>(c) Mondu GmbH</copyright>
     <author>Mondu GmbH</author>
     <link>https://mondu.ai</link>
@@ -15,6 +15,19 @@
     <description lang="en">This module offers you Mondu as a checkout option</description>
     <description lang="de">This module offers you Mondu as a checkout option</description>
 
+    <changelog version="2.1.0">
+        <changes lang="en">Changes for pending Mondu state</changes>
+        <changes lang="de">Changes for pending Mondu state</changes>
+    </changelog>
+
+    <changelog version="2.0.3">
+        <changes lang="en">Bugfixes and improvements</changes>
+        <changes lang="de">Bugfixes and improvements</changes>
+    </changelog>
+    <changelog version="2.0.2">
+        <changes lang="en">Allow merchants to use custom documents for ivoice</changes>
+        <changes lang="de">Allow merchants to use custom documents for ivoice</changes>
+    </changelog>
     <changelog version="2.0.1">
         <changes lang="en">Non existent service bugfix</changes>
         <changes lang="de">Non existent service bugfix</changes>
