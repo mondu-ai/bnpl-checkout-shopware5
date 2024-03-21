@@ -25,8 +25,8 @@
         <changes lang="de">Bugfixes and improvements</changes>
     </changelog>
     <changelog version="2.0.2">
-        <changes lang="en">Allow merchants to use custom documents for ivoice</changes>
-        <changes lang="de">Allow merchants to use custom documents for ivoice</changes>
+        <changes lang="en">Allow merchants to use custom documents for invoice</changes>
+        <changes lang="de">Allow merchants to use custom documents for invoice</changes>
     </changelog>
     <changelog version="2.0.1">
         <changes lang="en">Non existent service bugfix</changes>
