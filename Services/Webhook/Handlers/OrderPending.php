@@ -31,12 +31,12 @@ class OrderPending implements WebhookHandler
     public function invoke(Webhook $webhook)
     {
         $this->paymentStatusService->updatePaymentStatus(
-            $webhook->getExternalReferenceId(),
+            $webhook->getOrderUid(),
             Status::ORDER_STATE_IN_PROCESS,
             Status::GROUP_STATE
         );
         $this->paymentStatusService->updatePaymentStatus(
-            $webhook->getExternalReferenceId(),
+            $webhook->getOrderUid(),
             Status::PAYMENT_STATE_REVIEW_NECESSARY,
             Status::GROUP_PAYMENT,
             $webhook->getOrderState()

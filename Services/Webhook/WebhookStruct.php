@@ -148,6 +148,14 @@ class WebhookStruct
     }
 
     /**
+     * @return bool
+     */
+    public function isTemporaryExternalReferenceId(): bool
+    {
+        return str_starts_with($this->getExternalReferenceId(), 'M_SW5');
+    }
+
+    /**
      * @return WebhookStruct
      */
     public static function fromArray(array $data)

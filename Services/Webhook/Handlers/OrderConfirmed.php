@@ -30,7 +30,12 @@ class OrderConfirmed implements WebhookHandler
     public function invoke(Webhook $webhook)
     {
         $this->paymentStatusService->updatePaymentStatus(
-            $webhook->getExternalReferenceId(),
+            $webhook->getOrderUid(),
+            Status::ORDER_STATE_IN_PROCESS,
+            Status::GROUP_STATE
+        );
+        $this->paymentStatusService->updatePaymentStatus(
+            $webhook->getOrderUid(),
             Status::PAYMENT_STATE_COMPLETELY_PAID,
             Status::GROUP_PAYMENT,
             $webhook->getOrderState()
