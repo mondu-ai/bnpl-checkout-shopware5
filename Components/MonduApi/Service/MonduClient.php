@@ -54,8 +54,14 @@ class MonduClient {
      * @return array|null
      * @throws RequestException
      */
-    public function confirmMonduOrder($orderUid): ?array {
-        $response = $this->sendRequest('post', 'orders/'. $orderUid . '/confirm', null, 'CONFIRM_ORDER');
+    public function confirmMonduOrder($orderUid, $orderNumber = null): ?array {
+        $body = null;
+        if ($orderNumber) {
+            $body = [
+                'external_reference_id' => $orderNumber
+            ];
+        }
+        $response = $this->sendRequest('post', 'orders/'. $orderUid . '/confirm', json_encode($body), 'CONFIRM_ORDER');
         return $response['order'] ?? null;
     }
 

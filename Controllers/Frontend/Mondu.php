@@ -111,7 +111,8 @@ class Shopware_Controllers_Frontend_Mondu extends Shopware_Controllers_Frontend_
         }
 
         $orderUid = $this->request->get('order_uuid');
-        $monduOrder = $this->monduClient->confirmMonduOrder($orderUid);
+        $orderNumber = $this->saveOrder($orderUid, $orderUid, Status::PAYMENT_STATE_OPEN);
+        $monduOrder = $this->monduClient->confirmMonduOrder($orderUid, $orderNumber);
 
         if (!$monduOrder || !$this->isMonduOrderSuccessful($monduOrder['state'])) {
             $this->handleError('Mondu: Unable to confirm the Order');
@@ -120,24 +121,15 @@ class Shopware_Controllers_Frontend_Mondu extends Shopware_Controllers_Frontend_
 
         switch ($monduOrder['state']) {
             case PaymentMethods::MONDU_STATE_CONFIRMED:
-                $orderNumber = $this->saveOrder(
-                    $orderUid,
-                    $orderUid,
-                    self::PAYMENTSTATUSPAID
-                );
+                $this->savePaymentStatus($orderUid, $orderUid, Status::PAYMENT_STATE_COMPLETELY_PAID);
                 break;
             default:
-                $orderNumber = $this->saveOrder(
-                    $orderUid,
-                    $orderUid,
-                    Status::PAYMENT_STATE_REVIEW_NECESSARY
-                );
+                $this->savePaymentStatus($orderUid, $orderUid, Status::PAYMENT_STATE_REVIEW_NECESSARY);
         }
 
-
+        $monduOrder = $this->orderHelper->getMonduOrder($orderUid);
         $repo = $this->getModelManager()->getRepository(Order::class);
         $order = $repo->findOneBy(['number' => $orderNumber]);
-        $monduOrder = $this->orderHelper->updateExternalInfoOrder($order);
 
         $this->updateShopwareOrder($order,
             [
