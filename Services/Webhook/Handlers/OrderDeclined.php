@@ -26,11 +26,13 @@ class OrderDeclined implements WebhookHandler
      */
     public function invoke(Webhook $webhook)
     {
-        $this->paymentStatusService->updatePaymentStatus(
-            $webhook->getExternalReferenceId(),
-            Status::ORDER_STATE_CANCELLED_REJECTED,
-            Status::GROUP_STATE,
-            $webhook->getOrderState()
-        );
+        if (!$webhook->isTemporaryExternalReferenceId()) {
+            $this->paymentStatusService->updatePaymentStatus(
+                $webhook->getOrderUid(),
+                Status::ORDER_STATE_CANCELLED_REJECTED,
+                Status::GROUP_STATE,
+                $webhook->getOrderState()
+            );
+        }
     }
 }

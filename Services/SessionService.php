@@ -44,7 +44,7 @@ class SessionService {
         if($this->session->offsetExists('sOrderVariables')) {
             $variables = $this->session->offsetGet('sOrderVariables');
             if(empty($variables['sOrderNumber'])) {
-                $orderNumber = substr(md5(mt_rand()), 0, 7);
+                $orderNumber = uniqid('M_SW5_');
                 $variables['sOrderNumber'] = $orderNumber;
                 $this->session->offsetSet('sOrderVariables', $variables);
             }
