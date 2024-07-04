@@ -26,6 +26,12 @@
         <service id="Mond1SWR5\Components\PluginConfig\Service\ConfigService" public="true">
             <argument key="$router" id="router" type="service"/>
         </service>
+
+        <service
+            id="Mond1SWR5\Services\OrderServices\AbstractOrderAdditionalCostsService"
+            class="Mond1SWR5\Services\OrderServices\OrderAdditionalCostsService"
+        />
+
         <service id="Mond1SWR5\Services\PaymentService" public="true"/>
         <service id="Mond1SWR5\Services\Webhook\WebhookService" public="true"/>
         <service id="Mond1SWR5\Services\PaymentStatusService" public="true"/>

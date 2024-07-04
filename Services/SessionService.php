@@ -23,12 +23,14 @@ class SessionService {
     {
         try {
             $this->reserveOrderNumber();
+            $userData = $this->session->get('sOrderVariables')['sUserData'];
             $monduOrder = $this->monduClient->createOrder(
                 $this->getOrder(),
                 $returnUrl,
                 $cancelUrl,
                 $declineUrl,
-                $paymentMethod
+                $paymentMethod,
+                $userData
             );
 
             $checkoutUrl = $monduOrder['hosted_checkout_url'];
