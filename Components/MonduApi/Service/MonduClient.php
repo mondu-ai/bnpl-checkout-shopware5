@@ -37,11 +37,26 @@ class MonduClient {
     /**
      * @throws RequestException
      */
-    public function createOrder($order, $returnUrl, $cancelUrl, $declineUrl, $paymentMethod) {
+    public function createOrder($order, $returnUrl, $cancelUrl, $declineUrl, $paymentMethod, $userData) {
+        $user = $userData['additional']['user'];
+        $billing = $userData['billingaddress'];
+
         $order['payment_method'] = $paymentMethod;
         $order['success_url'] = $returnUrl;
         $order['cancel_url'] = $cancelUrl;
         $order['declined_url'] = $declineUrl;
+        $order['buyer'] = [
+            'email' => $user['email'],
+            'first_name' => $user['firstname'],
+            'last_name' => $user['lastname'],
+            'company_name' => $billing['company'],
+            'phone' => !$billing['phone'] ? null : (trim($billing['phone']) ?: null),
+            'is_registered' => (bool)$user['userID'],
+            'salutation' => $billing['salutation'],
+            'created_at' => $user['firstlogin'] . ' 00:00:00',
+            'updated_at' => $user['changed'],
+            'address_line1' => $billing['street']
+        ];
 
         $body = json_encode($order);
 

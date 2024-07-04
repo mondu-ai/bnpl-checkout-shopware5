@@ -4,6 +4,7 @@ namespace Mond1SWR5\Helpers;
 
 use Mond1SWR5\Components\PluginConfig\Service\ConfigService;
 use Mond1SWR5\Enum\PaymentMethods;
+use Mond1SWR5\Services\OrderServices\AbstractOrderAdditionalCostsService;
 use Monolog\Logger;
 use Shopware\Components\HttpClient\RequestException;
 use Shopware\Components\Model\ModelManager;
@@ -43,13 +44,19 @@ class OrderHelper
      */
     private $customerHelper;
 
+    /**
+     * @var AbstractOrderAdditionalCostsService
+     */
+    private $orderAdditionalCostsService;
+
     public function __construct(
         ModelManager $modelManager,
         DocumentHelper $documentHelper,
         Logger $logger,
         ConfigService $configService,
         CartHelper $cartHelper,
-        CustomerHelper $customerHelper
+        CustomerHelper $customerHelper,
+        AbstractOrderAdditionalCostsService $orderAdditionalCostsService
     ) {
         $this->modelManager = $modelManager;
         $this->documentHelper = $documentHelper;
@@ -57,6 +64,7 @@ class OrderHelper
         $this->configService = $configService;
         $this->cartHelper = $cartHelper;
         $this->customerHelper = $customerHelper;
+        $this->orderAdditionalCostsService = $orderAdditionalCostsService;
     }
 
     public function canShipOrder($order): bool
@@ -72,7 +80,7 @@ class OrderHelper
      */
     public function shipOrder($order) {
         /**
-         * @var MonduClient
+         * @var $client MonduClient
          */
         $client = Shopware()->Container()->get(MonduClient::class);
 
@@ -195,6 +203,7 @@ class OrderHelper
             'lines' => [
                 [
                     'discount_cents' => $this->getTotalDiscount($content, $chargeVat),
+                    'buyer_fee_cents' => $this->orderAdditionalCostsService->getAdditionalCostsCentsFromOrderVariables($orderVariables),
                     'shipping_price_cents' => round($shippingAmount * 100),
                     'line_items' => $this->removeDuplicateSwReferenceIds($this->getLineItems($content, $chargeVat))
                 ]
@@ -238,6 +247,7 @@ class OrderHelper
             'lines' => [
                 [
                     'discount_cents' => $totalDiscountGross,
+                    'buyer_fee_cents' => $this->orderAdditionalCostsService->getAdditionalCostsCentsFromOrder($order),
                     'shipping_price_cents' => round($order->getInvoiceShipping() * 100),
                     'line_items' => $this->removeDuplicateSwReferenceIds($lineitems)
                 ]
@@ -336,18 +346,19 @@ class OrderHelper
     }
 
     private function getBuyerParams($userData) {
-        $params = $userData['additional']['user'];
+        $user = $userData['additional']['user'];
         $billing = $userData['billingaddress'];
 
-        $phone = !$billing['phone'] ? null : (trim($billing['phone']) ?: null);
-
         return [
-            'email' => $params['email'],
-            'phone' => $phone,
+            'email' => $user['email'],
+            'first_name' => $user['firstname'],
+            'last_name' => $user['lastname'],
             'company_name' => $billing['company'],
-            'first_name' => $billing['firstname'],
-            'last_name' => $billing['lastname'],
+            'phone' => !$billing['phone'] ? null : (trim($billing['phone']) ?: null),
+            'is_registered' => (bool)$user['userID'],
             'salutation' => $billing['salutation'],
+            'created_at' => $user['firstlogin'] . ' 00:00:00',
+            'updated_at' => $user['changed'],
             'address_line1' => $billing['street']
         ];
     }
