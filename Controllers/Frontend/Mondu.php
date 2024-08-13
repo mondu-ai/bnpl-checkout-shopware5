@@ -137,7 +137,7 @@ class Shopware_Controllers_Frontend_Mondu extends Shopware_Controllers_Frontend_
                 'state' => $monduOrder['state'],
                 'payment_method' => $monduOrder['payment_method'],
                 'iban' => $monduOrder['bank_account']['iban'],
-                'company_name' => $monduOrder['merchant']['company_name'],
+                'company_name' => $monduOrder['merchant']['company_name'] ?? '',
                 'authorized_net_term' => $monduOrder['authorized_net_term']
             ]
         );
