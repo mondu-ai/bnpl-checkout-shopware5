@@ -41,5 +41,6 @@ class OrderConfirmed implements WebhookHandler
             $webhook->getOrderState()
         );
         $this->orderHelper->setOrderViban($webhook->getExternalReferenceId(), $webhook->getOrderUid(), $webhook->getViban());
+        $this->orderHelper->setOrderStatus($webhook->getOrderUid());
     }
 }

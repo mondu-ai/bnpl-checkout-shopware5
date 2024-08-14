@@ -5,7 +5,7 @@
     <label lang="en">Mondu Payment</label>
     <label lang="de">Mondu Payment</label>
 
-    <version>2.1.4</version>
+    <version>2.1.5</version>
     <copyright>(c) Mondu GmbH</copyright>
     <author>Mondu GmbH</author>
     <link>https://mondu.ai</link>
@@ -15,9 +15,14 @@
     <description lang="en">This module offers you Mondu as a checkout option</description>
     <description lang="de">This module offers you Mondu as a checkout option</description>
 
+    <changelog version="2.1.5">
+        <changes lang="en">Bugfixes and improvements.</changes>
+        <changes lang="de">Bugfixes and improvements.</changes>
+    </changelog>
+
     <changelog version="2.1.4">
-        <changes lang="en">Bugfixes and improvements</changes>
-        <changes lang="de">Bugfixes and improvements</changes>
+        <changes lang="en">Bugfixes and improvements.</changes>
+        <changes lang="de">Bugfixes and improvements.</changes>
     </changelog>
 
     <changelog version="2.1.3">
