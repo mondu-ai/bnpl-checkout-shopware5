@@ -2,6 +2,7 @@
 
 namespace Mond1SWR5\Helpers;
 
+use Enlight_Components_Db_Adapter_Pdo_Mysql;
 use Mond1SWR5\Components\PluginConfig\Service\ConfigService;
 use Mond1SWR5\Enum\PaymentMethods;
 use Mond1SWR5\Services\OrderServices\AbstractOrderAdditionalCostsService;
@@ -49,6 +50,11 @@ class OrderHelper
      */
     private $orderAdditionalCostsService;
 
+    /**
+     * @var Enlight_Components_Db_Adapter_Pdo_Mysql
+     */
+    protected $db;
+
     public function __construct(
         ModelManager                        $modelManager,
         DocumentHelper                      $documentHelper,
@@ -56,7 +62,8 @@ class OrderHelper
         ConfigService                       $configService,
         CartHelper                          $cartHelper,
         CustomerHelper                      $customerHelper,
-        AbstractOrderAdditionalCostsService $orderAdditionalCostsService
+        AbstractOrderAdditionalCostsService $orderAdditionalCostsService,
+        Enlight_Components_Db_Adapter_Pdo_Mysql $db
     ) {
         $this->modelManager                = $modelManager;
         $this->documentHelper              = $documentHelper;
@@ -65,6 +72,7 @@ class OrderHelper
         $this->cartHelper                  = $cartHelper;
         $this->customerHelper              = $customerHelper;
         $this->orderAdditionalCostsService = $orderAdditionalCostsService;
+        $this->db                          = $db;
     }
 
     public function canShipOrder($order): bool

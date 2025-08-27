@@ -1,7 +1,7 @@
 {
   "name": "mondu/bnpl-checkout-shopware5",
   "description": "Mondu payment method for shopware 5",
-  "version": "2.1.5",
+  "version": "2.2.0",
   "license": "MIT",
   "authors": [
     {

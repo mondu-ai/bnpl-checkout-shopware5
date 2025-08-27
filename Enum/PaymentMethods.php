@@ -11,18 +11,21 @@ final class PaymentMethods extends Enum
     const PAYMENT_MONDU_1 = 'mondu_payment';
     const PAYMENT_MONDU_2 = 'mondu_payment_sepa';
     const PAYMENT_MONDU_3 = 'mondu_payment_installment';
+    const PAYMENT_MONDU_4 = 'mondu_payment_pay_now';
 
     const MONDU_INVOICE = 'invoice';
     const MONDU_SEPA = 'direct_debit';
     const MONDU_INSTALLMENT = 'installment';
+    const MONDU_PAY_NOW = 'pay_now';
 
-    const LOCAL_MONDU_PAYMENT_METHODS = [self::PAYMENT_MONDU_1, self::PAYMENT_MONDU_2, self::PAYMENT_MONDU_3];
-    const MONDU_PAYMENT_METHODS = [self::MONDU_INVOICE, self::MONDU_SEPA, self::MONDU_INSTALLMENT];
+    const LOCAL_MONDU_PAYMENT_METHODS = [self::PAYMENT_MONDU_1, self::PAYMENT_MONDU_2, self::PAYMENT_MONDU_3, self::PAYMENT_MONDU_4];
+    const MONDU_PAYMENT_METHODS = [self::MONDU_INVOICE, self::MONDU_SEPA, self::MONDU_INSTALLMENT, self::MONDU_PAY_NOW];
 
     const MAPPING = [
         self::MONDU_INVOICE => self::PAYMENT_MONDU_1,
         self::MONDU_SEPA => self::PAYMENT_MONDU_2,
-        self::MONDU_INSTALLMENT => self::PAYMENT_MONDU_3
+        self::MONDU_INSTALLMENT => self::PAYMENT_MONDU_3,
+        self::MONDU_PAY_NOW => self::PAYMENT_MONDU_4,
     ];
 
     const MONDU_STATE_CONFIRMED = 'confirmed';
@@ -61,6 +64,18 @@ final class PaymentMethods extends Enum
             'position' => 2,
             'template' => 'mondu_change_payment.tpl',
             'additionalDescription' => 'Hinweise zur Verarbeitung Ihrer personenbezogenen Daten durch die Mondu GmbH finden Sie <a href="https://www.mondu.ai/de/datenschutzgrundverordnung-kaeufer" target="_blank">hier</a>.',
+            'mondu_config' => [
+                'allowed_in_countries' => ['DE'],
+            ],
+        ],
+        self::PAYMENT_MONDU_4 => [
+            'name' => self::PAYMENT_MONDU_4,
+            'description' =>  'Mondu Echtzeitüberweisung – Direkt von Ihrem Bankkonto bezahlen',
+            'action' => 'Mondu',
+            'active' => true,
+            'position' => 3,
+            'template' => 'mondu_change_payment.tpl',
+            'additionalDescription' => 'Informationen über die Verarbeitung Ihrer persönlichen Daten durch die Mondu GmbH finden Sie <a href="https://www.mondu.ai/de/datenschutzgrundverordnung-kaeufer" target="_blank">hier</a>.',
             'mondu_config' => [
                 'allowed_in_countries' => ['DE'],
             ],
