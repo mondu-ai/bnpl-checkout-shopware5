@@ -31,6 +31,8 @@
                             SEPA Direct Debit
                         {elseif $order.attribute.monduPaymentMethod eq 'installment'}
                             Ratenzahlung
+                        {elseif $order.attribute.monduPaymentMethod eq 'pay_now'}
+                            Pay Now
                         {else}
                             {$order.attribute.monduPaymentMethod}
                         {/if}
