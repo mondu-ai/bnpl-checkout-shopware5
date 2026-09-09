@@ -65,8 +65,8 @@ All services use Symfony DI with autowiring. Key services:
 
 `Controllers/Frontend/Mondu.php` handles the payment flow:
 1. `indexAction()` — validates selected payment method
-2. `directAction()` — creates a Mondu order via API, redirects to Mondu checkout widget
-3. Callback actions: `successAction()`, `cancelAction()`, `declineAction()`
+2. `directAction()` — creates a Mondu order via API, redirects to the Mondu hosted checkout (`hosted_checkout_url`)
+3. Callback actions: `returnAction()`, `cancelAction()`, `declineAction()`
 
 ### Webhook System
 

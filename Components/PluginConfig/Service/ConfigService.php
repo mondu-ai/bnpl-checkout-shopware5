@@ -13,9 +13,7 @@ use Zend_Cache_Core as Cache;
 
 class ConfigService {
     const API_URL = 'https://api.mondu.ai/api/v1';
-    const WIDGET_URL = 'https://checkout.mondu.ai/widget.js';
     const SANDBOX_API_URL = 'https://api.demo.mondu.ai/api/v1';
-    const SANDBOX_WIDGET_URL = 'https://checkout.demo.mondu.ai/widget.js';
 
     /**
      * @var CachedConfigReader
@@ -116,11 +114,6 @@ class ConfigService {
     public function getBaseApiUrl(): string
     {
         return $this->isSandbox() ? self::SANDBOX_API_URL : self::API_URL;
-    }
-
-    public function getWidgetUrl(): string
-    {
-        return $this->isSandbox() ? self::SANDBOX_WIDGET_URL : self::WIDGET_URL;
     }
 
     public function getApiUrl($url): string
