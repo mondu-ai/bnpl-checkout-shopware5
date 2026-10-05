@@ -295,12 +295,10 @@ In file /opt/homebrew/etc/nginx/nginx.conf **_File location may differ depending
   In file Components/PluginConfig/Service/ConfigService.php modify 
     ```php
     const SANDBOX_API_URL = 'https://api.demo.mondu.ai/api/v1';
-    const SANDBOX_WIDGET_URL = 'https://checkout.demo.mondu.ai/widget.js';
     ```
     to 
     ```php
     const SANDBOX_API_URL = 'https://api.stage.mondu.ai/api/v1';
-    const SANDBOX_WIDGET_URL = 'https://checkout.stage.mondu.ai/widget.js';
     ```
   - Create a release which need ot be uploaded to shopware
     ```bash
